@@ -1,9 +1,9 @@
 # OpenTalk v1.0 Production Deployment Guide
 
-This guide covers how to deploy **OpenTalk Version 1.0** as:
-1. **A live production website on Render.com** (with free automated HTTPS & Secure WebSockets).
-2. **An installable Android App (PWA)** that runs full-screen on any Android device with zero app store delays.
-3. **A standalone Android APK** (for Google Play Store or direct APK installation).
+## Live Production Links
+- **Live Production URL**: [https://opentalk-cifq.onrender.com](https://opentalk-cifq.onrender.com)
+- **GitHub Repository**: [https://github.com/Arjuntiruveedula/opentalk](https://github.com/Arjuntiruveedula/opentalk)
+- **Render Service Dashboard**: [https://dashboard.render.com/web/srv-dbhoo9kipgvc73d7se7g](https://dashboard.render.com/web/srv-dbhoo9kipgvc73d7se7g)
 
 ---
 
