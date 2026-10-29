@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+opentalk.db
+client/
+server/
+.DS_Store
+.vscode/
+.idea/

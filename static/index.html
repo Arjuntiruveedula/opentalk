@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OpenTalk - Spoken English Practice</title>
+
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OpenTalk">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+    <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen antialiased select-none">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: DEDICATED AUTH PAGE (LOGIN / SIGNUP) -->
+    <!-- ========================================== -->
+    <div id="authView" class="min-h-screen bg-gradient-to-b from-slate-50 via-brand-50/30 to-indigo-50/20 flex flex-col justify-center items-center p-4">
+        <div class="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col gap-5 my-auto">
+            
+            <!-- Branding Header -->
+            <div class="text-center">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-brand-500/25 mb-3">
+                    <i data-lucide="radio" class="w-7 h-7"></i>
+                </div>
+                <h1 class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent">OpenTalk</h1>
+                <p class="text-xs text-slate-500 font-medium mt-1">Spoken English Practice & Peer Calling</p>
+                <div class="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold px-3 py-1 rounded-full mt-2">
+                    <span>🇮🇳</span> Practice Telugu-to-Telugu or Go Global
+                </div>
+            </div>
+
+            <!-- Page Tabs (Sign In vs Create Account) -->
+            <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
+                <button id="authTabLogin" class="py-2.5 rounded-xl transition bg-white text-brand-700 shadow-sm flex items-center justify-center gap-1.5">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Sign In
+                </button>
+                <button id="authTabSignup" class="py-2.5 rounded-xl transition text-slate-500 hover:text-slate-800 flex items-center justify-center gap-1.5">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i> Create Account
+                </button>
+            </div>
+
+            <!-- Alert Message Box -->
+            <div id="authErrorBanner" class="hidden bg-rose-50 border border-rose-200 text-rose-700 px-3.5 py-2.5 rounded-xl text-xs leading-relaxed flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0 text-rose-500"></i>
+                <span id="authErrorText">Error message</span>
+            </div>
+
+            <!-- LOGIN PAGE FORM -->
+            <form id="loginForm" class="flex flex-col gap-3.5">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Email Address</label>
+                    <input id="loginEmail" type="email" required placeholder="you@example.com" class="w-full text-xs p-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Password</label>
+                    <input id="loginPassword" type="password" required placeholder="Enter your password" class="w-full text-xs p-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-slate-50/50">
+                </div>
+                <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md shadow-brand-500/25 active:scale-95 transition mt-1">
+                    Sign In to OpenTalk
+                </button>
+                <p class="text-center text-xs text-slate-500 mt-1">
+                    Don't have an account? <a href="#signup" id="goToSignupLink" class="text-brand-600 font-bold hover:underline">Create free account</a>
+                </p>
+            </form>
+
+            <!-- SIGNUP / PROFILE CREATION PAGE FORM -->
+            <form id="signupForm" class="flex flex-col gap-3.5 hidden">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Full Name</label>
+                    <input id="signupName" type="text" required placeholder="e.g. Ravi Kumar" class="w-full text-xs p-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Email Address</label>
+                    <input id="signupEmail" type="email" required placeholder="you@example.com" class="w-full text-xs p-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Password (min 6 chars)</label>
+                    <input id="signupPassword" type="password" required minlength="6" placeholder="Choose a secure password" class="w-full text-xs p-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-slate-50/50">
+                </div>
+                
+                <!-- Gender Selector -->
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Gender</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 cursor-pointer hover:border-brand-300 transition bg-white">
+                            <input type="radio" name="signupGender" value="Boy" checked class="text-brand-600 focus:ring-brand-500">
+                            <span class="text-xs font-semibold text-slate-800">👦 Boy (Male)</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 cursor-pointer hover:border-brand-300 transition bg-white">
+                            <input type="radio" name="signupGender" value="Girl" class="text-brand-600 focus:ring-brand-500">
+                            <span class="text-xs font-semibold text-slate-800">👧 Girl (Female)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Native Language</label>
+                        <select id="signupLang" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white font-semibold text-slate-800">
+                            <option value="Telugu" selected>🇮🇳 Telugu (తెలుగు)</option>
+                            <option value="Hindi">🇮🇳 Hindi (हिन्दी)</option>
+                            <option value="Tamil">🇮🇳 Tamil (தமிழ்)</option>
+                            <option value="Kannada">🇮🇳 Kannada (ಕನ್ನಡ)</option>
+                            <option value="Malayalam">🇮🇳 Malayalam (മലയാളം)</option>
+                            <option value="Bengali">🇮🇳 Bengali (বাংলা)</option>
+                            <option value="Marathi">🇮🇳 Marathi (मराठी)</option>
+                            <option value="Spanish">🇪🇸 Spanish (Español)</option>
+                            <option value="French">🇫🇷 French (Français)</option>
+                            <option value="German">🇩🇪 German (Deutsch)</option>
+                            <option value="Arabic">🇸🇦 Arabic (العربية)</option>
+                            <option value="Japanese">🇯🇵 Japanese (日本語)</option>
+                            <option value="English">🌐 English / Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">English Level</label>
+                        <select id="signupLevel" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white font-semibold text-slate-800">
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate" selected>Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Preferred Practice Mode</label>
+                    <select id="signupMode" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white font-semibold text-slate-800">
+                        <option value="local" selected>🇮🇳 Local Language Mode (Telugu to Telugu)</option>
+                        <option value="global">🌍 Global Mode (Worldwide English)</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="signupSubmitBtn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md shadow-brand-500/25 active:scale-95 transition mt-1">
+                    Create Profile & Start Speaking
+                </button>
+                <p class="text-center text-xs text-slate-500 mt-1">
+                    Already have an account? <a href="#login" id="goToLoginLink" class="text-brand-600 font-bold hover:underline">Sign In</a>
+                </p>
+            </form>
+
+            <!-- Quick Demo One-Click Access -->
+            <div class="border-t border-slate-100 pt-3">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2 text-center">Instant 1-Click Demo Login</span>
+                <div class="grid grid-cols-2 gap-2">
+                    <button class="demo-login-btn py-2 px-2.5 rounded-xl border border-brand-200 bg-brand-50 hover:bg-brand-100 text-brand-800 text-[11px] font-bold text-left flex items-center gap-1.5 transition" data-preset="telugu_1">
+                        <span>👦</span>
+                        <div class="truncate">
+                            <div>Ravi Teja</div>
+                            <div class="text-[9px] font-normal text-brand-600">Boy • Telugu Local</div>
+                        </div>
+                    </button>
+                    <button class="demo-login-btn py-2 px-2.5 rounded-xl border border-brand-200 bg-brand-50 hover:bg-brand-100 text-brand-800 text-[11px] font-bold text-left flex items-center gap-1.5 transition" data-preset="telugu_2">
+                        <span>👧</span>
+                        <div class="truncate">
+                            <div>Ananya Rao</div>
+                            <div class="text-[9px] font-normal text-brand-600">Girl • Telugu Local</div>
+                        </div>
+                    </button>
+                    <button class="demo-login-btn py-2 px-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[11px] font-bold text-left flex items-center gap-1.5 transition col-span-2" data-preset="global_1">
+                        <span>🌍</span>
+                        <div class="truncate">
+                            <div>Kenji Sato</div>
+                            <div class="text-[9px] font-normal text-slate-500">Boy • Japanese • Global Mode</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: AUTHENTICATED OPENTALK APP DASHBOARD -->
+    <!-- ========================================== -->
+    <div id="mainAppView" class="min-h-screen flex flex-col pb-20 md:pb-6 hidden">
+
+        <!-- Top App Header -->
+        <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100 px-4 py-3 flex items-center justify-between max-w-lg mx-auto w-full">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                    <i data-lucide="radio" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent">OpenTalk</h1>
+                    <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Spoken English</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+                <!-- Native Language Pill -->
+                <button id="headerLangPill" class="flex items-center gap-1 bg-brand-50 border border-brand-200/60 px-2.5 py-1 rounded-full text-xs font-bold text-brand-700 shadow-sm hover:bg-brand-100 transition" title="Your Native Language">
+                    <span id="headerLangFlag">🇮🇳</span>
+                    <span id="headerLangText">Telugu</span>
+                </button>
+
+                <!-- Streak Badge -->
+                <div class="flex items-center gap-1 bg-amber-50 border border-amber-200/60 px-2.5 py-1 rounded-full text-xs font-bold text-amber-700 shadow-sm">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 fill-amber-500 text-amber-500 animate-pulse"></i>
+                    <span id="streakDays">1</span>
+                </div>
+
+                <!-- Free Talktime Badge -->
+                <div class="flex items-center gap-1 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full text-xs font-bold text-emerald-700 shadow-sm">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span id="freeMinsBadge">20</span><span class="text-[9px] text-emerald-600 font-medium">m</span>
+                </div>
+
+                <!-- User Avatar / Profile Button -->
+                <button id="headerUserBtn" class="w-8 h-8 rounded-full border border-slate-200 overflow-hidden hover:ring-2 hover:ring-brand-500 transition ml-0.5" title="View Profile">
+                    <img id="headerAvatarImg" src="https://api.dicebear.com/7.x/bottts/svg?seed=user" class="w-full h-full object-cover">
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Container -->
+        <main class="flex-1 max-w-lg w-full mx-auto p-4 flex flex-col">
+
+            <!-- Android App Install Prompt Banner -->
+            <div id="pwaInstallBanner" class="hidden items-center justify-between p-3 mb-3 bg-gradient-to-r from-brand-600 to-indigo-600 rounded-2xl text-white shadow-md transition-all">
+                <div class="flex items-center gap-2.5">
+                    <img src="/static/icons/icon-192.png" class="w-9 h-9 rounded-xl bg-white/20 p-1">
+                    <div>
+                        <h4 class="font-extrabold text-xs">Install OpenTalk App</h4>
+                        <p class="text-[10px] text-white/80">Add to your Android home screen</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button id="pwaInstallBtn" class="bg-white text-brand-700 font-extrabold text-xs px-3 py-1.5 rounded-xl active:scale-95 shadow-sm transition">
+                        Install
+                    </button>
+                    <button id="pwaDismissBtn" class="text-white/60 hover:text-white p-1" title="Dismiss">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 1: CALLS (PEER PRACTICE & MATCHMAKING) -->
+            <section id="tabCalls" class="flex-1 flex flex-col gap-3.5">
+                
+                <!-- User Status & Incognito Banner -->
+                <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=user123" class="w-12 h-12 rounded-full bg-brand-50 border-2 border-brand-200 p-0.5">
+                        <div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span id="userNameDisplay" class="font-bold text-sm text-slate-800">Learner</span>
+                                <span id="userGenderBadge" class="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded-md border border-indigo-100">👦 Boy</span>
+                                <span id="userLevelBadge" class="text-[10px] bg-amber-50 text-amber-700 font-bold px-2 py-0.5 rounded-md border border-amber-200">Intermediate</span>
+                                <span id="userLangBadge" class="text-[10px] bg-brand-50 text-brand-700 font-bold px-2 py-0.5 rounded-md border border-brand-200 flex items-center gap-1">
+                                    <span id="userLangFlag">🇮🇳</span> <span id="userLangName">Telugu</span>
+                                </span>
+                            </div>
+                            <p id="incognitoSubtitle" class="text-xs text-slate-400 mt-0.5">Regular Mode (Name visible)</p>
+                        </div>
+                    </div>
+
+                    <!-- Incognito Toggle -->
+                    <button id="toggleIncognitoBtn" class="flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition text-center" title="Toggle Incognito Calling">
+                        <i data-lucide="ghost" class="w-4 h-4 text-slate-500" id="incognitoIcon"></i>
+                        <span class="text-[10px] font-bold" id="incognitoText">Incognito</span>
+                    </button>
+                </div>
+
+                <!-- Language Matching Mode Switcher (Local vs Global) -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                            <i data-lucide="languages" class="w-4 h-4 text-brand-600"></i> Matchmaking Mode
+                        </span>
+                        <span id="activeModeBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span id="activeModeBadgeText">Telugu ➔ Telugu</span>
+                        </span>
+                    </div>
+
+                    <!-- Segmented Buttons -->
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+                        <button id="modeLocalBtn" class="matching-mode-btn active flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition shadow-sm bg-white text-brand-700 border border-brand-200">
+                            <span class="text-lg" id="modeLocalFlag">🇮🇳</span>
+                            <div class="text-left">
+                                <div class="leading-tight">Local Language</div>
+                                <div class="text-[10px] font-semibold text-brand-600" id="modeLocalSubtext">Telugu to Telugu</div>
+                            </div>
+                        </button>
+                        <button id="modeGlobalBtn" class="matching-mode-btn flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                            <span class="text-lg">🌍</span>
+                            <div class="text-left">
+                                <div class="leading-tight">Global Practice</div>
+                                <div class="text-[10px] font-normal text-slate-400">Worldwide English</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Mode Hint -->
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 bg-slate-50 rounded-xl p-2.5 border border-slate-100">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5"></i>
+                        <p id="modeDescription" class="leading-relaxed">
+                            Matches strictly with fellow <strong class="text-brand-700">Telugu</strong> speakers. Practice English comfortably without hesitation!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Partner Gender Matching Filter (Any / Girls / Boys) -->
+                <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <i data-lucide="heart-handshake" class="w-4 h-4 text-brand-600"></i> Call Partner Filter:
+                        </span>
+                        <span id="genderPrefBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200">
+                            Opposite Gender First
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-xl" id="genderPrefContainer">
+                        <button class="gender-pref-btn active py-2 px-2 rounded-lg font-bold text-xs bg-white text-brand-700 shadow-sm border border-brand-200 flex items-center justify-center gap-1 transition" data-pref="Any">
+                            <span>✨</span> Any
+                        </button>
+                        <button class="gender-pref-btn py-2 px-2 rounded-lg font-semibold text-xs text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition" data-pref="Girls">
+                            <span>👧</span> Girls
+                        </button>
+                        <button class="gender-pref-btn py-2 px-2 rounded-lg font-semibold text-xs text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition" data-pref="Boys">
+                            <span>👦</span> Boys
+                        </button>
+                    </div>
+                    <p id="genderPrefHint" class="text-[11px] text-slate-500 italic mt-0.5 leading-snug">
+                        ✨ Connects with opposite gender first. If busy, pairs with active co-learners so you don't wait!
+                    </p>
+                </div>
+
+                <!-- Big Call Action Center -->
+                <div class="bg-gradient-to-b from-white to-brand-50/40 rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-5 my-auto text-center relative overflow-hidden">
+                    <div class="absolute -top-12 -right-12 w-36 h-36 bg-brand-200/30 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -bottom-12 -left-12 w-36 h-36 bg-indigo-200/30 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900 tracking-tight" id="callCardHeading">1-on-1 Voice Practice</h2>
+                        <p class="text-xs text-slate-500 mt-1 max-w-xs" id="callCardSubheading">Connect instantly with a Telugu co-learner for a 15-minute spoken English session.</p>
+                    </div>
+
+                    <!-- Call Button with Pulsing Ripple Effect -->
+                    <div class="relative flex items-center justify-center my-1">
+                        <div class="absolute w-36 h-36 rounded-full bg-brand-400/20 pulse-animation"></div>
+                        <div class="absolute w-48 h-48 rounded-full bg-brand-400/10 pulse-animation" style="animation-delay: 0.8s;"></div>
+                        
+                        <button id="startCallBtn" class="relative z-10 w-28 h-28 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 active:scale-95 text-white flex flex-col items-center justify-center gap-1 shadow-xl shadow-brand-500/30 transition-all group">
+                            <i data-lucide="phone-call" class="w-8 h-8 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-extrabold tracking-wide uppercase">Start Call</span>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+                        <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i> Safe Community</span>
+                        <span>•</span>
+                        <span class="flex items-center gap-1"><i data-lucide="mic" class="w-3.5 h-3.5 text-brand-500"></i> HD Audio</span>
+                    </div>
+                </div>
+
+                <!-- Topic of the Day Card -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600 flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Daily Topic Starter
+                        </span>
+                        <button id="nextTopicBtn" class="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Shuffle
+                        </button>
+                    </div>
+                    <h3 id="dailyTopicTitle" class="font-bold text-slate-800 text-sm">Your Dream Vacation & Global Travel</h3>
+                    <p id="dailyTopicCue" class="text-xs text-slate-500 leading-relaxed">Talk about a country or city you would love to visit in the next five years.</p>
+                    <div class="flex flex-wrap gap-1.5 mt-1" id="dailyTopicVocab">
+                        <span class="text-[10px] bg-brand-50 text-brand-700 font-medium px-2 py-0.5 rounded-md">wanderlust</span>
+                        <span class="text-[10px] bg-brand-50 text-brand-700 font-medium px-2 py-0.5 rounded-md">scenic view</span>
+                        <span class="text-[10px] bg-brand-50 text-brand-700 font-medium px-2 py-0.5 rounded-md">local delicacy</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: CLUBS (AUDIO GROUP ROOMS) -->
+            <section id="tabClubs" class="flex-1 flex-col gap-4 hidden">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="font-extrabold text-lg text-slate-900 tracking-tight">Audio Voice Clubs</h2>
+                        <p class="text-xs text-slate-500">Drop into live group rooms to listen or speak.</p>
+                    </div>
+                    <button id="openCreateRoomModalBtn" class="bg-brand-600 hover:bg-brand-700 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 shadow-sm">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Create Club
+                    </button>
+                </div>
+
+                <!-- Live Rooms Grid -->
+                <div id="roomsContainer" class="flex flex-col gap-3">
+                    <!-- Dynamically populated room cards -->
+                </div>
+            </section>
+
+            <!-- TAB 3: AI TUTOR (ARIA SPEAKING COACH) -->
+            <section id="tabAi" class="flex-1 flex-col gap-3 hidden">
+                <!-- Aria Header Card -->
+                <div class="bg-gradient-to-r from-brand-600 to-indigo-600 rounded-2xl p-4 text-white flex items-center justify-between shadow-md">
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80" class="w-12 h-12 rounded-full border-2 border-white/40 object-cover">
+                        <div>
+                            <h3 class="font-bold text-base">Aria</h3>
+                            <p class="text-xs text-white/80">AI Spoken English Coach</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full font-semibold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live Feedback
+                    </span>
+                </div>
+
+                <!-- Messages Area -->
+                <div id="aiChatBox" class="flex-1 bg-white rounded-2xl p-3.5 border border-slate-100 shadow-sm flex flex-col gap-3 overflow-y-auto max-h-[440px]">
+                    <div class="flex gap-2.5 items-start">
+                        <div class="w-7 h-7 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">A</div>
+                        <div class="bg-slate-100 rounded-2xl rounded-tl-none p-3 text-xs text-slate-800 leading-relaxed max-w-[85%]">
+                            Hello there! I'm Aria, your 24/7 speaking coach. Say or type anything in English, and I'll converse with you and provide instant corrections on grammar and phrasing!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Grammar Polish Card (Dynamic) -->
+                <div id="aiCorrectionCard" class="hidden bg-amber-50/80 border border-amber-200 rounded-2xl p-3 text-xs flex flex-col gap-1.5 transition-all">
+                    <div class="flex items-center justify-between text-amber-800 font-bold">
+                        <span class="flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5 text-amber-600"></i> Instant Grammar Polish</span>
+                        <span id="fluencyScorePill" class="bg-amber-200/60 px-2 py-0.5 rounded text-[10px]">Score: 88%</span>
+                    </div>
+                    <div class="text-slate-600">
+                        <span class="line-through text-red-500 font-medium" id="grammarOriginal">"I am agree with you"</span>
+                        <span class="mx-1">➔</span>
+                        <span class="text-emerald-700 font-bold" id="grammarSuggested">"I agree with you"</span>
+                    </div>
+                    <p id="grammarRule" class="text-[11px] text-amber-900/80 italic mt-0.5">Use 'I agree' instead of 'I am agree'.</p>
+                </div>
+
+                <!-- Voice Listening & Silence Countdown Status Banner -->
+                <div id="aiVoiceStatusBanner" class="hidden items-center justify-between px-3.5 py-2 rounded-2xl bg-indigo-50 border border-indigo-100 text-xs text-indigo-700 shadow-xs transition-all">
+                    <div class="flex items-center gap-2">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                        </span>
+                        <span id="aiVoiceStatusText" class="font-semibold text-slate-800">🎙️ Listening... speak naturally</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="aiVoiceTimerBadge" class="text-[10px] bg-indigo-200/60 font-bold px-2 py-0.5 rounded-full text-indigo-800">
+                            Auto-send in 4s
+                        </span>
+                        <button id="aiVoiceSendNowBtn" class="text-[10px] bg-brand-600 hover:bg-brand-700 text-white font-bold px-2.5 py-0.5 rounded-full shadow-xs transition active:scale-95" type="button">
+                            Send Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input Bar -->
+                <div class="bg-white rounded-2xl p-2 border border-slate-200 shadow-sm flex items-center gap-2">
+                    <button id="aiMicBtn" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition" title="Hold/Tap to Speak">
+                        <i data-lucide="mic" class="w-5 h-5" id="aiMicIcon"></i>
+                    </button>
+                    <input id="aiTextInput" type="text" placeholder="Type your sentence or practice question..." class="flex-1 bg-transparent text-xs text-slate-800 focus:outline-none">
+                    <button id="sendAiTextBtn" class="w-10 h-10 rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white flex items-center justify-center transition">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 4: LEARN (VOCABULARY & IDIOMS) -->
+            <section id="tabLearn" class="flex-1 flex-col gap-4 hidden">
+                <div>
+                    <h2 class="font-extrabold text-lg text-slate-900 tracking-tight">Daily Learning Hub</h2>
+                    <p class="text-xs text-slate-500">Expand your vocabulary, slang, and phrasal verbs.</p>
+                </div>
+
+                <!-- Daily Vocabulary Cards List -->
+                <div id="vocabListContainer" class="flex flex-col gap-3">
+                    <!-- Dynamically populated vocab items -->
+                </div>
+
+                <!-- Speaking Scenarios List -->
+                <div class="mt-2 flex flex-col gap-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Interactive Scenarios</h3>
+                    <div id="scenariosContainer" class="flex flex-col gap-2.5">
+                        <!-- Dynamically populated scenario cards -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: PROFILE & STATS -->
+            <section id="tabProfile" class="flex-1 flex-col gap-4 hidden">
+                
+                <!-- Profile Hero Card -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center gap-3 relative">
+                    
+                    <!-- Avatar with Quick Shuffle Button -->
+                    <div class="relative">
+                        <img id="profileHeroAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=user123" class="w-24 h-24 rounded-full border-4 border-brand-100 bg-brand-50 p-1 object-cover shadow-inner">
+                        <button id="shuffleAvatarBtn" class="absolute bottom-0 right-0 bg-brand-600 hover:bg-brand-700 active:scale-90 text-white rounded-full p-2 shadow-md transition" title="Shuffle Avatar Style">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                    <div>
+                        <h2 id="profileHeroName" class="font-extrabold text-lg text-slate-800">Learner</h2>
+                        <p id="profileHeroEmail" class="text-xs text-slate-400 font-medium">user@example.com</p>
+                        
+                        <div class="flex items-center justify-center gap-2 mt-2.5 flex-wrap">
+                            <span id="profileHeroGender" class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                                <span>👦</span> Boy
+                            </span>
+                            <span id="profileHeroLang" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                                <span>🇮🇳</span> Native: Telugu
+                            </span>
+                            <span id="profileHeroLevel" class="text-xs bg-slate-100 text-slate-700 font-bold px-3 py-1 rounded-full">
+                                Intermediate
+                            </span>
+                            <span id="profileHeroMode" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold px-3 py-1 rounded-full">
+                                Mode: Local
+                            </span>
+                        </div>
+
+                        <p id="profileHeroBio" class="text-xs text-slate-600 italic mt-3 max-w-sm leading-relaxed"></p>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 w-full pt-4 border-t border-slate-100 mt-2">
+                        <div class="flex flex-col items-center">
+                            <span id="statMinsSpoken" class="text-lg font-extrabold text-slate-900">0</span>
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Mins Spoken</span>
+                        </div>
+                        <div class="flex flex-col items-center border-x border-slate-100">
+                            <span id="statTotalCalls" class="text-lg font-extrabold text-slate-900">0</span>
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Total Calls</span>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span id="statRating" class="text-lg font-extrabold text-amber-500 flex items-center gap-0.5">
+                                4.8 <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                            </span>
+                            <span class="text-[10px] text-slate-400 uppercase font-semibold">Peer Rating</span>
+                        </div>
+                    </div>
+
+                    <!-- Profile Action Buttons -->
+                    <div class="flex items-center gap-2.5 w-full pt-3">
+                        <button id="profileInstallAppBtn" class="py-3 px-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 hidden" title="Install App on Android">
+                            <i data-lucide="smartphone" class="w-4 h-4"></i> Install App
+                        </button>
+                        <button id="openEditProfileBtn" class="flex-1 py-3 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i> Edit Profile
+                        </button>
+                        <button id="signOutBtn" class="py-3 px-5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+                            <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
+                        </button>
+                    </div>
+                </div>
+
+                <!-- My Friends & Connections Card -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-sm text-slate-800 flex items-center gap-1.5">
+                            <i data-lucide="users" class="w-4 h-4 text-brand-600"></i> My Friends (<span id="friendsCountBadge">0</span>)
+                        </h3>
+                        <span class="text-[10px] text-slate-400 font-medium">Practice Partners</span>
+                    </div>
+                    <div id="friendsListContainer" class="flex flex-col gap-2">
+                        <p class="text-xs text-slate-400 italic text-center py-2">No friends added yet. Add peers during or after calls!</p>
+                    </div>
+                </div>
+
+                <!-- Call History Card -->
+                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-sm text-slate-800 flex items-center gap-1.5">
+                            <i data-lucide="history" class="w-4 h-4 text-brand-600"></i> Call History
+                        </h3>
+                        <span class="text-[10px] text-slate-400 font-medium">Recent 1-on-1 Sessions</span>
+                    </div>
+                    <div id="callHistoryContainer" class="flex flex-col gap-2.5">
+                        <p class="text-xs text-slate-400 italic text-center py-2">No calls logged yet. Start a call to build your history!</p>
+                    </div>
+                </div>
+
+                <!-- Referral Bonus Card -->
+                <div class="bg-gradient-to-br from-indigo-500 to-brand-600 rounded-3xl p-5 text-white shadow-sm flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm">Earn +15 Free Minutes</h3>
+                        <p class="text-xs text-white/80 mt-0.5">Invite a Telugu friend to practice on OpenTalk.</p>
+                    </div>
+                    <button onclick="navigator.clipboard.writeText(window.location.origin); alert('Invite link copied to clipboard!');" class="bg-white text-brand-700 text-xs font-bold px-3.5 py-2 rounded-xl active:scale-95 shadow-sm">
+                        Share Link
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 max-w-lg mx-auto w-full flex items-center justify-around py-2.5 shadow-lg">
+            <button class="nav-tab-btn active flex flex-col items-center gap-0.5 text-brand-600 font-bold" data-tab="tabCalls">
+                <i data-lucide="phone" class="w-5 h-5"></i>
+                <span class="text-[10px]">Calls</span>
+            </button>
+            <button class="nav-tab-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600 font-medium" data-tab="tabClubs">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span class="text-[10px]">Clubs</span>
+            </button>
+            <button class="nav-tab-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600 font-medium" data-tab="tabAi">
+                <i data-lucide="bot" class="w-5 h-5"></i>
+                <span class="text-[10px]">AI Tutor</span>
+            </button>
+            <button class="nav-tab-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600 font-medium" data-tab="tabLearn">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="text-[10px]">Learn</span>
+            </button>
+            <button class="nav-tab-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600 font-medium" data-tab="tabProfile">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px]">Profile</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- ================== MODALS ================== -->
+
+    <!-- EDIT PROFILE MODAL -->
+    <div id="editProfileModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full flex flex-col gap-3.5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900">Edit Profile</h3>
+                <button id="closeEditProfileModalBtn" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Display Name</label>
+                <input id="editProfileName" type="text" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Gender</label>
+                    <select id="editProfileGender" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white font-medium text-slate-800">
+                        <option value="Boy">👦 Boy (Male)</option>
+                        <option value="Girl">👧 Girl (Female)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">English Level</label>
+                    <select id="editProfileLevel" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white font-medium text-slate-800">
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Native Language</label>
+                <select id="editProfileLang" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white font-medium text-slate-800">
+                    <option value="Telugu">🇮🇳 Telugu (తెలుగు)</option>
+                    <option value="Hindi">🇮🇳 Hindi (हिन्दी)</option>
+                    <option value="Tamil">🇮🇳 Tamil (தமிழ்)</option>
+                    <option value="Kannada">🇮🇳 Kannada (ಕನ್ನಡ)</option>
+                    <option value="Malayalam">🇮🇳 Malayalam (മലയാളം)</option>
+                    <option value="Bengali">🇮🇳 Bengali (বাংলা)</option>
+                    <option value="Marathi">🇮🇳 Marathi (मराठी)</option>
+                    <option value="Spanish">🇪🇸 Spanish (Español)</option>
+                    <option value="French">🇫🇷 French (Français)</option>
+                    <option value="German">🇩🇪 German (Deutsch)</option>
+                    <option value="Arabic">🇸🇦 Arabic (العربية)</option>
+                    <option value="Japanese">🇯🇵 Japanese (日本語)</option>
+                    <option value="English">🌐 English / Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Preferred Practice Mode</label>
+                <select id="editProfileMode" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white font-medium text-slate-800">
+                    <option value="local">🇮🇳 Local Language Mode (Telugu to Telugu)</option>
+                    <option value="global">🌍 Global Mode (Talk with anyone worldwide)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-1">Bio / Goals</label>
+                <textarea id="editProfileBio" placeholder="Share why you're learning English..." class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none h-16"></textarea>
+            </div>
+
+            <div id="profileSaveNotice" class="hidden text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl text-xs font-semibold text-center">
+                ✓ Profile updated successfully!
+            </div>
+
+            <button id="saveProfileBtn" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md shadow-brand-500/20 active:scale-95 transition mt-1">
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- IN-CALL SCREEN MODAL (Full Screen Overlay) -->
+    <div id="callModal" class="fixed inset-0 z-50 bg-slate-900 text-white flex flex-col justify-between p-6 hidden">
+        <!-- Call Header -->
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="callStatusText" class="text-xs font-semibold text-slate-300">Searching for partner...</span>
+            </div>
+            <div class="bg-white/10 px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider" id="callTimerDisplay">
+                15:00
+            </div>
+        </div>
+
+        <!-- Call Center: Partner Avatar & Audio Waves -->
+        <div class="flex flex-col items-center justify-center gap-5 my-auto">
+            <!-- Match Type Badge -->
+            <div id="callMatchBadge" class="bg-brand-500/25 border border-brand-400/40 text-brand-200 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5 shadow-sm">
+                <span id="callMatchFlag">🇮🇳</span>
+                <span id="callMatchText">Telugu ➔ Telugu Match</span>
+            </div>
+
+            <div class="relative flex items-center justify-center">
+                <div class="absolute w-44 h-44 rounded-full bg-brand-500/20 pulse-animation"></div>
+                <img id="partnerAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=partner" class="relative z-10 w-28 h-28 rounded-full border-4 border-brand-400 bg-slate-800 p-1 shadow-2xl">
+            </div>
+
+            <div class="text-center">
+                <h3 id="partnerName" class="text-xl font-extrabold tracking-tight">Searching...</h3>
+                <div class="flex items-center justify-center gap-2 mt-1 flex-wrap">
+                    <span id="partnerGenderBadge" class="text-[11px] bg-indigo-500/30 text-indigo-200 font-semibold px-2.5 py-0.5 rounded-full">👧 Girl</span>
+                    <span id="partnerLevel" class="text-[11px] bg-white/10 text-white/80 font-medium px-2 py-0.5 rounded-full">Intermediate</span>
+                    <span id="partnerLangBadge" class="text-[11px] bg-white/10 text-brand-300 font-semibold px-2.5 py-0.5 rounded-full">Telugu</span>
+                    <button id="inCallAddFriendBtn" class="text-[11px] bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-200 font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 transition">
+                        <i data-lucide="user-plus" class="w-3 h-3"></i> Add Friend
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audio Spectrum Visualizer Bars -->
+            <div class="flex items-center gap-1.5 h-10 mt-1">
+                <div class="w-1.5 bg-brand-400 rounded-full audio-bar"></div>
+                <div class="w-1.5 bg-indigo-400 rounded-full audio-bar"></div>
+                <div class="w-1.5 bg-brand-300 rounded-full audio-bar"></div>
+                <div class="w-1.5 bg-purple-400 rounded-full audio-bar"></div>
+                <div class="w-1.5 bg-brand-400 rounded-full audio-bar"></div>
+                <div class="w-1.5 bg-indigo-400 rounded-full audio-bar"></div>
+            </div>
+
+            <!-- In-Call Icebreaker Card -->
+            <div id="inCallIcebreakerCard" class="bg-white/10 backdrop-blur-md rounded-2xl p-4 max-w-xs text-center border border-white/10 shadow-lg flex flex-col gap-2">
+                <span class="text-[10px] uppercase font-bold text-brand-300 tracking-wider">Conversation Prompt</span>
+                <p id="inCallPromptText" class="text-xs text-white/90 font-medium italic">"What's the best movie you have watched recently and why?"</p>
+                <button id="nextIcebreakerBtn" class="text-[11px] text-brand-300 hover:text-white flex items-center justify-center gap-1 mt-1">
+                    <i data-lucide="refresh-cw" class="w-3 h-3"></i> Next question
+                </button>
+            </div>
+        </div>
+
+        <!-- Call Action Buttons -->
+        <div class="flex items-center justify-center gap-6 pb-4">
+            <button id="toggleMicBtn" class="w-14 h-14 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition active:scale-95" title="Mute / Unmute Mic">
+                <i data-lucide="mic" class="w-6 h-6" id="callMicIcon"></i>
+            </button>
+
+            <!-- End Call Button -->
+            <button id="endCallBtn" class="w-16 h-16 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-lg shadow-rose-600/40 transition active:scale-95" title="Hang Up">
+                <i data-lucide="phone-off" class="w-7 h-7"></i>
+            </button>
+
+            <button id="reportUserBtn" class="w-14 h-14 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition active:scale-95" title="Report / Block">
+                <i data-lucide="flag" class="w-5 h-5 text-amber-300"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- POST-CALL RATING & REMARK MODAL -->
+    <div id="feedbackModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full flex flex-col gap-4 text-center shadow-2xl relative max-h-[92vh] overflow-y-auto">
+            <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-500 mx-auto flex items-center justify-center">
+                <i data-lucide="award" class="w-8 h-8"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-800">Great Conversation!</h3>
+                <p class="text-xs text-slate-500 mt-1">How was your speaking session with <span id="ratingPartnerName" class="font-bold text-slate-800">your partner</span>?</p>
+            </div>
+
+            <!-- Star Rating Selectors -->
+            <div class="flex justify-center gap-2 my-1" id="starContainer">
+                <button class="star-btn text-amber-400 hover:scale-125 transition" data-val="1"><i data-lucide="star" class="w-7 h-7 fill-amber-400"></i></button>
+                <button class="star-btn text-amber-400 hover:scale-125 transition" data-val="2"><i data-lucide="star" class="w-7 h-7 fill-amber-400"></i></button>
+                <button class="star-btn text-amber-400 hover:scale-125 transition" data-val="3"><i data-lucide="star" class="w-7 h-7 fill-amber-400"></i></button>
+                <button class="star-btn text-amber-400 hover:scale-125 transition" data-val="4"><i data-lucide="star" class="w-7 h-7 fill-amber-400"></i></button>
+                <button class="star-btn text-amber-400 hover:scale-125 transition" data-val="5"><i data-lucide="star" class="w-7 h-7 fill-amber-400"></i></button>
+            </div>
+
+            <!-- Quick Compliment Tags -->
+            <div class="flex flex-wrap gap-1.5 justify-center">
+                <button type="button" class="remark-chip text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition" data-tag="🗣️ Fluent & Confident">
+                    🗣️ Fluent & Confident
+                </button>
+                <button type="button" class="remark-chip text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition" data-tag="📚 Great Vocabulary">
+                    📚 Great Vocabulary
+                </button>
+                <button type="button" class="remark-chip text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition" data-tag="🤝 Polite & Friendly">
+                    🤝 Polite & Friendly
+                </button>
+                <button type="button" class="remark-chip text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 hover:bg-brand-50 hover:text-brand-700 transition" data-tag="💡 Clear Pronunciation">
+                    💡 Clear Pronunciation
+                </button>
+            </div>
+
+            <textarea id="feedbackNote" placeholder="Write a compliment or feedback note..." class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none h-16"></textarea>
+
+            <!-- Add Friend Checkbox -->
+            <label class="flex items-center justify-center gap-2 bg-brand-50 border border-brand-200 p-2.5 rounded-xl cursor-pointer text-xs font-bold text-brand-700 hover:bg-brand-100 transition">
+                <input type="checkbox" id="addFriendCheckbox" checked class="rounded text-brand-600 focus:ring-brand-500">
+                <span>Add <span id="ratingFriendName">Partner</span> as Friend</span>
+            </label>
+
+            <button id="submitFeedbackBtn" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md shadow-brand-500/20 active:scale-95 transition">
+                Submit Feedback & Return Home
+            </button>
+        </div>
+    </div>
+
+    <!-- AUDIO CLUB ROOM MODAL -->
+    <div id="roomModal" class="fixed inset-0 z-50 bg-slate-900 text-white flex flex-col justify-between p-5 hidden">
+        <!-- Room Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <div>
+                <span class="text-[10px] bg-brand-500/30 text-brand-300 font-bold px-2 py-0.5 rounded uppercase" id="roomCategoryBadge">IELTS</span>
+                <h3 id="roomTitleHeader" class="text-base font-extrabold mt-1">Room Title</h3>
+            </div>
+            <button id="leaveRoomBtn" class="bg-rose-600/80 hover:bg-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Leave
+            </button>
+        </div>
+
+        <!-- Stage: Speakers -->
+        <div class="flex-1 flex flex-col gap-4 py-4 overflow-y-auto">
+            <div>
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Speakers on Stage</span>
+                <div id="roomSpeakersContainer" class="flex flex-wrap gap-4 mt-2">
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="relative">
+                            <img id="roomHostAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=host" class="w-14 h-14 rounded-full border-2 border-emerald-400 p-0.5 bg-slate-800">
+                            <span class="absolute bottom-0 right-0 bg-emerald-500 text-[9px] font-bold px-1 rounded-full text-white">Host</span>
+                        </div>
+                        <span id="roomHostName" class="text-xs font-semibold text-slate-200">Host</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audience: Listeners -->
+            <div class="mt-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Audience (<span id="roomAudienceCount">1</span>)</span>
+                </div>
+                <div id="roomAudienceContainer" class="flex flex-wrap gap-3 mt-2">
+                    <!-- Listeners avatars -->
+                </div>
+            </div>
+
+            <!-- In-room Live Messages -->
+            <div id="roomChatContainer" class="mt-auto bg-black/30 rounded-2xl p-3 flex flex-col gap-1.5 max-h-36 overflow-y-auto text-xs">
+                <p class="text-slate-400 italic text-[11px]">Welcome to the audio room! Raise your hand to speak.</p>
+            </div>
+        </div>
+
+        <!-- Bottom Room Bar -->
+        <div class="flex items-center gap-2 pt-3 border-t border-white/10">
+            <button id="raiseHandBtn" class="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md">
+                <i data-lucide="hand" class="w-4 h-4"></i> Raise Hand to Speak
+            </button>
+            <input id="roomMsgInput" type="text" placeholder="Send chat message..." class="flex-1 bg-white/10 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+            <button id="sendRoomMsgBtn" class="w-9 h-9 rounded-xl bg-white/15 hover:bg-white/25 flex items-center justify-center text-white">
+                <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- CREATE CLUB MODAL -->
+    <div id="createRoomModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full flex flex-col gap-3 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-extrabold text-slate-900">Create Audio Club</h3>
+                <button id="closeCreateRoomModalBtn" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <input id="newRoomTitle" type="text" placeholder="Club Title (e.g. Daily English Debate)" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            
+            <select id="newRoomCategory" class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-700">
+                <option value="General">General English</option>
+                <option value="IELTS">IELTS / TOEFL Prep</option>
+                <option value="Career">Job Interview & Career</option>
+                <option value="Travel">Travel & Culture</option>
+            </select>
+
+            <textarea id="newRoomDesc" placeholder="Description / Agenda for speakers..." class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none h-16"></textarea>
+
+            <button id="submitCreateRoomBtn" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md shadow-brand-500/20 active:scale-95 transition mt-1">
+                Launch Audio Room
+            </button>
+        </div>
+    </div>
+
+    <!-- App Scripts -->
+    <script src="/app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

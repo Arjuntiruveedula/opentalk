@@ -1,0 +1,55 @@
+{
+  "name": "OpenTalk - Spoken English Practice",
+  "short_name": "OpenTalk",
+  "description": "1-on-1 Spoken English Practice with Local Telugu & Global Peers and 24/7 AI Tutor",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "lang": "en-US",
+  "categories": ["education", "social", "communication"],
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Practice Call",
+      "short_name": "Call",
+      "description": "Start a 1-on-1 spoken English call",
+      "url": "/calls",
+      "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Practice with AI Tutor",
+      "short_name": "AI Tutor",
+      "description": "Converse with Aria, your AI English coach",
+      "url": "/#tabAi",
+      "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
